@@ -129,8 +129,7 @@ python manage.py runserver
 <h2>🙌 Credits</h2>
 <p>
 Created by <strong>Mehedi Hassan</strong> using <code>Django</code> and <code>Bootstrap</code>.  
-Special thanks to <a href="https://www.djangoproject.com/">Django</a> for providing a powerful web framework and 
-<a href="https://getbootstrap.com/">Bootstrap</a> for responsive UI components.
+
 </p>
 <hr>
 <p align="center">⭐ Star this repo if you find it useful for building Django web applications!</p>
