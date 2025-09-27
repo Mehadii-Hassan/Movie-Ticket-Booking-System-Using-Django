@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Ticket - {{ booking.booking_id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f8f9fa;
+        }
+        .ticket {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border: 3px dashed #28a745;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #28a745;
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .header p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .ticket-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .info-section {
+            flex: 1;
+            padding: 0 15px;
+        }
+        .info-section h3 {
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .info-item {
+            margin-bottom: 10px;
+        }
+        .info-item strong {
+            display: inline-block;
+            width: 120px;
+            color: #555;
+        }
+        .qr-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            background: #333;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #28a745;
+            color: #666;
+        }
+        .important-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #856404;
+        }
+        @media print {
+            body { margin: 0; background: white; }
+            .ticket { box-shadow: none; border: 2px dashed #28a745; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="header">
+            <h1>MovieTix</h1>
+            <p>Your Digital Movie Ticket</p>
+            <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+        </div>
+        
+        <div class="ticket-info">
+            <div class="info-section">
+                <h3>Movie Information</h3>
+                <div class="info-item">
+                    <strong>Movie:</strong> {{ booking.showtime.movie.title }}
+                </div>
+                <div class="info-item">
+                    <strong>Genre:</strong> {{ booking.showtime.movie.genre }}
+                </div>
+                <div class="info-item">
+                    <strong>Duration:</strong> {{ booking.showtime.movie.duration }} mins
+                </div>
+                <div class="info-item">
+                    <strong>Rating:</strong> {{ booking.showtime.movie.rating }}
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>Show Details</h3>
+                <div class="info-item">
+                    <strong>Theater:</strong> {{ booking.showtime.theater.name }}
+                </div>
+                <div class="info-item">
+                    <strong>Location:</strong> {{ booking.showtime.theater.location }}
+                </div>
+                <div class="info-item">
+                    <strong>Date:</strong> {{ booking.showtime.show_date }}
+                </div>
+                <div class="info-item">
+                    <strong>Time:</strong> {{ booking.showtime.show_time }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="ticket-info">
+            <div class="info-section">
+                <h3>Booking Details</h3>
+                <div class="info-item">
+                    <strong>Passenger:</strong> {{ booking.user.first_name }} {{ booking.user.last_name }}
+                </div>
+                <div class="info-item">
+                    <strong>Seats:</strong> 
+                    {% for booked_seat in booked_seats %}
+                        {{ booked_seat.seat.row }}{{ booked_seat.seat.number }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="info-item">
+                    <strong>Total Seats:</strong> {{ booked_seats.count }}
+                </div>
+                <div class="info-item">
+                    <strong>Total Amount:</strong> ৳{{ booking.total_amount }}
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>Payment Info</h3>
+                <div class="info-item">
+                    <strong>Status:</strong> {{ booking.payment_status|title }}
+                </div>
+                <div class="info-item">
+                    <strong>Booked On:</strong> {{ booking.booking_date|date:"M d, Y" }}
+                </div>
+                <div class="info-item">
+                    <strong>Time:</strong> {{ booking.booking_date|time:"H:i" }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="qr-section">
+            <div class="qr-code">QR</div>
+            <p><strong>Entry Code: {{ booking.booking_id|truncatechars:8 }}</strong></p>
+            <p><small>Show this ticket at the theater entrance</small></p>
+        </div>
+        
+        <div class="important-note">
+            <strong>Important Instructions:</strong><br>
+            • Please arrive 15 minutes before the show time<br>
+            • Carry a valid photo ID for verification<br>
+            • Outside food and drinks are not allowed<br>
+            • This ticket is non-refundable and non-transferable
+        </div>
+        
+        <div class="footer">
+            <p><strong>MovieTix - Your Ultimate Movie Experience</strong></p>
+            <p>For support, contact: support@movietix.com | +880-1234-567890</p>
+            <p><small>Generated on {{ booking.booking_date|date:"M d, Y \a\\t H:i" }}</small></p>
+        </div>
+    </div>
+</body>
+</html>

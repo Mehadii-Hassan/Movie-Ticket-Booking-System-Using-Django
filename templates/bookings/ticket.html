@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Ticket - MovieTix{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h3><i class="bi bi-check-circle"></i> Booking Confirmed!</h3>
+            </div>
+            <div class="card-body">
+                <div class="ticket-container p-4" style="border: 2px dashed #28a745; border-radius: 10px; background: #f8f9fa;">
+                    <div class="text-center mb-4">
+                        <h2>MovieTix</h2>
+                        <p class="text-muted">Your Movie Ticket</p>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Movie Details</h5>
+                            <p><strong>Movie:</strong> {{ booking.showtime.movie.title }}</p>
+                            <p><strong>Theater:</strong> {{ booking.showtime.theater.name }}</p>
+                            <p><strong>Date:</strong> {{ booking.showtime.show_date }}</p>
+                            <p><strong>Time:</strong> {{ booking.showtime.show_time }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Booking Information</h5>
+                            <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+                            <p><strong>Seats:</strong> 
+                                {% for booked_seat in booked_seats %}
+                                    {{ booked_seat.seat.row }}{{ booked_seat.seat.number }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p><strong>Total Amount:</strong> ৳{{ booking.total_amount }}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Confirmed</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mb-3">
+                        <div class="qr-code" style="width: 100px; height: 100px; background: #333; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="bi bi-qr-code" style="font-size: 3rem;"></i>
+                        </div>
+                        <small class="text-muted">QR Code for Entry</small>
+                    </div>
+                    
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle"></i> Please arrive 15 minutes before the show time. Carry a valid ID.
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'download_ticket' booking.booking_id %}" class="btn btn-primary me-2" download>
+                        <i class="bi bi-download"></i> Download Ticket
+                    </a>
+                    <button onclick="window.print()" class="btn btn-info me-2">
+                        <i class="bi bi-printer"></i> Print Ticket
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

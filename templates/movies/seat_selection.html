@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Seats - {{ showtime.movie.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Select Your Seats</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>{{ showtime.movie.title }}</h5>
+                <p><strong>Theater:</strong> {{ showtime.theater.name }}</p>
+                <p><strong>Date & Time:</strong> {{ showtime.show_date }} at {{ showtime.show_time }}</p>
+                <p><strong>Price per seat:</strong> ৳{{ showtime.price }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="screen">SCREEN</div>
+        
+        <form method="post" action="{% url 'book_seats' showtime.id %}" id="seatForm">
+            {% csrf_token %}
+            <div class="seat-map text-center">
+                {% for row_letter, row_seats in seat_rows.items %}
+                    <div class="seat-row">
+                        <span class="row-label" style="display: inline-block; width: 30px; font-weight: bold;">{{ row_letter }}</span>
+                        {% for seat_info in row_seats %}
+                            <div class="seat {% if seat_info.is_booked %}booked{% else %}available{% endif %}" 
+                                 data-seat-id="{{ seat_info.seat.id }}"
+                                 data-row="{{ seat_info.seat.row }}"
+                                 data-number="{{ seat_info.seat.number }}"
+                                 {% if not seat_info.is_booked %}onclick="toggleSeat(this)"{% endif %}>
+                                {{ seat_info.seat.number }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="legend">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="seat available me-2"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="seat selected me-2"></div>
+                            <span>Selected</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="seat booked me-2"></div>
+                            <span>Booked</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="booking-summary">
+                        <h5>Booking Summary</h5>
+                        <p>Selected Seats: <span id="selectedSeats">None</span></p>
+                        <p>Total Amount: ৳<span id="totalAmount">0</span></p>
+                        <button type="submit" class="btn btn-success btn-lg" id="bookNowBtn" disabled>
+                            <i class="bi bi-credit-card"></i> Book Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let selectedSeats = [];
+const pricePerSeat = {{ showtime.price }};
+
+function toggleSeat(seatElement) {
+    const seatId = seatElement.dataset.seatId;
+    const row = seatElement.dataset.row;
+    const number = seatElement.dataset.number;
+    
+    if (seatElement.classList.contains('selected')) {
+        // Deselect seat
+        seatElement.classList.remove('selected');
+        seatElement.classList.add('available');
+        selectedSeats = selectedSeats.filter(seat => seat.id !== seatId);
+        
+        // Remove hidden input
+        const hiddenInput = document.querySelector(`input[value="${seatId}"]`);
+        if (hiddenInput) {
+            hiddenInput.remove();
+        }
+    } else {
+        // Select seat
+        seatElement.classList.remove('available');
+        seatElement.classList.add('selected');
+        selectedSeats.push({id: seatId, row: row, number: number});
+        
+        // Add hidden input
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'seats';
+        hiddenInput.value = seatId;
+        document.getElementById('seatForm').appendChild(hiddenInput);
+    }
+    
+    updateBookingSummary();
+}
+
+function updateBookingSummary() {
+    const selectedSeatsElement = document.getElementById('selectedSeats');
+    const totalAmountElement = document.getElementById('totalAmount');
+    const bookNowBtn = document.getElementById('bookNowBtn');
+    
+    if (selectedSeats.length === 0) {
+        selectedSeatsElement.textContent = 'None';
+        totalAmountElement.textContent = '0';
+        bookNowBtn.disabled = true;
+    } else {
+        const seatLabels = selectedSeats.map(seat => `${seat.row}${seat.number}`).join(', ');
+        selectedSeatsElement.textContent = seatLabels;
+        totalAmountElement.textContent = (selectedSeats.length * pricePerSeat).toString();
+        bookNowBtn.disabled = false;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie.title }} - MovieTix{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        {% if movie.poster %}
+            <img src="{{ movie.poster.url }}" class="img-fluid rounded" alt="{{ movie.title }}">
+        {% else %}
+            <div class="bg-secondary d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <i class="bi bi-film" style="font-size: 4rem; color: white;"></i>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h1>{{ movie.title }}</h1>
+        <div class="mb-3">
+            <span class="badge bg-primary">{{ movie.genre }}</span>
+            <span class="badge bg-success">{{ movie.rating }}</span>
+        </div>
+        <p class="lead">{{ movie.description }}</p>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong><i class="bi bi-clock"></i> Duration:</strong> {{ movie.duration }} minutes
+            </div>
+            <div class="col-md-6">
+                <strong><i class="bi bi-calendar"></i> Release Date:</strong> {{ movie.release_date }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Show Times</h3>
+        {% if showtimes %}
+            <div class="row">
+                {% for showtime in showtimes %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ showtime.theater.name }}</h5>
+                                <p class="card-text">
+                                    <i class="bi bi-geo-alt"></i> {{ showtime.theater.location }}<br>
+                                    <i class="bi bi-calendar"></i> {{ showtime.show_date }}<br>
+                                    <i class="bi bi-clock"></i> {{ showtime.show_time }}<br>
+                                    <i class="bi bi-currency-dollar"></i> ৳{{ showtime.price }}
+                                </p>
+                                {% if user.is_authenticated %}
+                                    <a href="{% url 'seat_selection' showtime.id %}" class="btn btn-primary">
+                                        <i class="bi bi-ticket-perforated"></i> Book Seats
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                                        Login to Book
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No show times available</h4>
+                <p>Please check back later for available show times.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

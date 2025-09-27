@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment - MovieTix{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center">Make Payment</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <h5>Select Payment Method</h5>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="card" value="card" required>
+                            <label class="form-check-label" for="card">
+                                <i class="bi bi-credit-card"></i> Credit/Debit Card
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="mobile" value="mobile">
+                            <label class="form-check-label" for="mobile">
+                                <i class="bi bi-phone"></i> Mobile Banking (bKash, Nagad, Rocket)
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="online" value="online">
+                            <label class="form-check-label" for="online">
+                                <i class="bi bi-bank"></i> Online Banking
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="paymentDetails" style="display: none;">
+                        <div id="cardDetails" class="payment-form" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Card Number</label>
+                                <input type="text" class="form-control" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" placeholder="MM/YY">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-control" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="mobileDetails" class="payment-form" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Mobile Number</label>
+                                <input type="text" class="form-control" placeholder="01XXXXXXXXX">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">PIN</label>
+                                <input type="password" class="form-control" placeholder="Enter your PIN">
+                            </div>
+                        </div>
+                        
+                        <div id="onlineDetails" class="payment-form" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Select Bank</label>
+                                <select class="form-control">
+                                    <option>Select your bank</option>
+                                    <option>Dutch Bangla Bank</option>
+                                    <option>Brac Bank</option>
+                                    <option>City Bank</option>
+                                    <option>Eastern Bank</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-shield-check"></i> Your payment information is secure and encrypted.
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-lock"></i> Complete Payment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+    const paymentDetails = document.getElementById('paymentDetails');
+    const cardDetails = document.getElementById('cardDetails');
+    const mobileDetails = document.getElementById('mobileDetails');
+    const onlineDetails = document.getElementById('onlineDetails');
+    
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            paymentDetails.style.display = 'block';
+            
+            // Hide all payment forms
+            cardDetails.style.display = 'none';
+            mobileDetails.style.display = 'none';
+            onlineDetails.style.display = 'none';
+            
+            // Show selected payment form
+            if (this.value === 'card') {
+                cardDetails.style.display = 'block';
+            } else if (this.value === 'mobile') {
+                mobileDetails.style.display = 'block';
+            } else if (this.value === 'online') {
+                onlineDetails.style.display = 'block';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

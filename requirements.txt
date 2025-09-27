@@ -1,0 +1,16 @@
+# Core Django Framework
+Django==5.0.1
+
+# Image Processing (for movie posters)
+Pillow==10.2.0
+
+# Django Dependencies (automatically installed with Django)
+asgiref==3.7.2
+sqlparse==0.4.4
+tzdata==2024.1
+
+# Optional: For PDF generation (if you want PDF tickets)
+# reportlab==4.0.8
+
+# Optional: For better HTML to PDF conversion
+# weasyprint==61.2
